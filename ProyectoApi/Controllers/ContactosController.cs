@@ -25,6 +25,19 @@ namespace ProyectoApi.Controllers
             
         }
 
+        [HttpGet]
+        [Route("{id:guid}")]
+        public async Task<IActionResult> GetContacto([FromRoute] Guid id)
+        {
+
+            var contacto = await dbContext.Contactos.FindAsync(id);
+            if (contacto == null) return NotFound();
+
+            return Ok(contacto);
+
+
+        }
+
         [HttpPost]
         public async Task<IActionResult> AgregarContacto(AgregarContacto contacto)
         {
@@ -43,6 +56,41 @@ namespace ProyectoApi.Controllers
 
         }
 
+
+        [HttpPut]
+        [Route("{id:guid}")]
+
+        public async Task<IActionResult> ModificarContacto([FromRoute] Guid id, ModificarContacto contacto)
+        {
+            var contactoModificar =await dbContext.Contactos.FindAsync(id);
+            if(contactoModificar == null) return NotFound();
+
+            contactoModificar.NombreCompleto = contacto.NombreCompleto;
+            contactoModificar.Correo = contacto.Correo;
+            contactoModificar.Direccion = contacto.Direccion;
+            contactoModificar.Telefono = contacto.Telefono;
+
+            await dbContext.SaveChangesAsync();
+
+            return Ok(contactoModificar);
+
+        }
+
+
+        [HttpDelete]
+        [Route("{id:guid}")]
+
+        public async Task<IActionResult> EliminarContacto([FromRoute] Guid id)
+        {
+            var contactoEliminar = await dbContext.Contactos.FindAsync(id);
+            if (contactoEliminar == null) return NotFound();
+
+            dbContext.Remove(contactoEliminar);
+            await dbContext.SaveChangesAsync();
+
+            return Ok(contactoEliminar);
+
+        }
 
     }
 }
